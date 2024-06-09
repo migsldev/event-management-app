@@ -1,5 +1,3 @@
-# event_management/user/models.py
-
 from sqlalchemy import Column, Integer, String, Table, ForeignKey
 from sqlalchemy.orm import relationship
 from event_management.database import Base

@@ -10,13 +10,12 @@ from logging.config import fileConfig
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from event_management.database import Base
-from event_management.event.models import Event, Schedule, Attendee
+from event_management.event.models import Event
+from event_management.schedule.models import Schedule
+from event_management.attendee.models import Attendee
 from event_management.user.models import User
 
 config = context.config
-
-# Print the config to debug
-print(f"sqlalchemy.url: {config.get_main_option('sqlalchemy.url')}")
 
 fileConfig(config.config_file_name)
 
