@@ -103,5 +103,12 @@ def create(username, password):
     user = user_crud.create_user(db, username, password)
     click.echo(f"User created: {user.username}")
 
+@user.command()
+def list():
+    db = next(get_db())
+    users = user_crud.get_users(db)
+    for user in users:
+        click.echo(f"ID: {user.id}, Username: {user.username}")
+
 if __name__ == '__main__':
     cli()
