@@ -42,8 +42,6 @@ def list():
     for event in events:
         click.echo(f"ID: {event.id}, Name: {event.name}, Date: {event.date}, Location: {event.location}")
 
-# Other Event Commands (update, delete) would follow similar pattern
-
 # Attendee Commands
 @cli.group()
 def attendee():
@@ -58,7 +56,13 @@ def register(name, email, event_id):
     attendee = attendee_crud.register_attendee(db, name, email, event_id)
     click.echo(f"Attendee {attendee.name} registered with email {attendee.email} for event ID {attendee.event_id}")
 
-# Other Attendee Commands (list, update, remove) would follow similar pattern
+@attendee.command()
+@click.argument('event_id')
+def list(event_id):
+    db = next(get_db())
+    attendees = attendee_crud.get_attendees_for_event(db, event_id)
+    for attendee in attendees:
+        click.echo(f"ID: {attendee.id}, Name: {attendee.name}, Email: {attendee.email}, Event ID: {attendee.event_id}")
 
 # Schedule Commands
 @cli.group()
@@ -75,8 +79,6 @@ def add(event_id, start_time, end_time, description):
     schedule = schedule_crud.add_schedule(db, event_id, start_time, end_time, description)
     click.echo(f"Schedule added: {schedule.description} from {schedule.start_time} to {schedule.end_time}")
 
-# Other Schedule Commands (list, update, remove) would follow similar pattern
-
 # User Commands
 @cli.group()
 def user():
@@ -89,8 +91,6 @@ def create(username, password):
     db = next(get_db())
     user = user_crud.create_user(db, username, password)
     click.echo(f"User created: {user.username}")
-
-# Other User Commands (list, delete) would follow similar pattern
 
 if __name__ == '__main__':
     cli()
