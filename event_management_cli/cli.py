@@ -76,8 +76,19 @@ def schedule():
 @click.argument('description')
 def add(event_id, start_time, end_time, description):
     db = next(get_db())
-    schedule = schedule_crud.add_schedule(db, event_id, start_time, end_time, description)
+    # Convert time strings to datetime objects
+    start_time_obj = datetime.strptime(start_time, "%Y-%m-%d %H:%M")
+    end_time_obj = datetime.strptime(end_time, "%Y-%m-%d %H:%M")
+    schedule = schedule_crud.add_schedule(db, event_id, start_time_obj, end_time_obj, description)
     click.echo(f"Schedule added: {schedule.description} from {schedule.start_time} to {schedule.end_time}")
+
+@schedule.command()
+@click.argument('event_id')
+def list(event_id):
+    db = next(get_db())
+    schedules = schedule_crud.get_schedules_for_event(db, event_id)
+    for schedule in schedules:
+        click.echo(f"ID: {schedule.id}, Event ID: {schedule.event_id}, Start Time: {schedule.start_time}, End Time: {schedule.end_time}, Description: {schedule.description}")
 
 # User Commands
 @cli.group()

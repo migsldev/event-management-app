@@ -1,5 +1,4 @@
 # event_management/schedule/crud.py
-
 from sqlalchemy.orm import Session
 from .models import Schedule
 
@@ -12,7 +11,7 @@ def add_schedule(db: Session, event_id: int, start_time: str, end_time: str, des
     return db_schedule
 
 # Get all Schedules for an Event
-def get_schedules(db: Session, event_id: int):
+def get_schedules_for_event(db: Session, event_id: int):
     return db.query(Schedule).filter(Schedule.event_id == event_id).all()
 
 # Get a Schedule by ID
