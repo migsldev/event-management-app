@@ -12,7 +12,7 @@ def register_attendee(db: Session, name: str, email: str, event_id: int):
     return db_attendee
 
 # Get all Attendees for an Event
-def get_attendees(db: Session, event_id: int):
+def get_attendees_for_event(db: Session, event_id: int):
     return db.query(Attendee).filter(Attendee.event_id == event_id).all()
 
 # Get an Attendee by ID
