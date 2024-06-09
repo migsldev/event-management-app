@@ -5,6 +5,7 @@ from event_management.event import crud as event_crud
 from event_management.attendee import crud as attendee_crud
 from event_management.schedule import crud as schedule_crud
 from event_management.user import crud as user_crud
+from datetime import datetime
 
 # Dependency Injection for Database Session
 def get_db():
@@ -29,7 +30,9 @@ def event():
 @click.argument('location')
 def create(name, date, location):
     db = next(get_db())
-    event = event_crud.create_event(db, name, date, location)
+    # Convert date string to datetime object
+    date_obj = datetime.strptime(date, "%Y-%m-%d")
+    event = event_crud.create_event(db, name, date_obj, location)
     click.echo(f"Event created: {event.name} on {event.date} at {event.location}")
 
 @event.command()
