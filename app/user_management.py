@@ -38,15 +38,20 @@ def fetch():
     users = session.query(User).all()
     session.close()
     for user in users:
-        click.echo(f"User: {user.username}")
+        click.echo(f"ID: {user.id}, Username: {user.username}")
 
 @user_cli.command()
 @click.argument('username')
 def createevent(username):
     """Create a new event."""
     session: Session = SessionLocal()
+    user = session.query(User).filter(User.username == username).first()
+    if not user:
+        click.echo(f"User {username} does not exist!")
+        return
     event_name = click.prompt('Event name')
-    event = Event(name=event_name, created_by=username)
+    event_description = click.prompt('Event description')
+    event = Event(title=event_name, description=event_description, owner_id=user.id)
     session.add(event)
     session.commit()
     session.close()
@@ -73,7 +78,7 @@ def viewavailableevents():
     events = session.query(Event).all()
     session.close()
     for event in events:
-        click.echo(f"Event: {event.name} (Created by: {event.created_by})")
+        click.echo(f"Event: {event.title} (Created by User ID: {event.owner_id})")
 
 @user_cli.command()
 def viewallevents():
@@ -82,7 +87,7 @@ def viewallevents():
     events = session.query(Event).all()
     session.close()
     for event in events:
-        click.echo(f"Event: {event.name} (Created by: {event.created_by})")
+        click.echo(f"Event: {event.title} (Created by User ID: {event.owner_id})")
 
 @user_cli.command()
 @click.argument('event_id', type=int)
@@ -92,12 +97,11 @@ def joinevent(event_id, username):
     session: Session = SessionLocal()
     event = session.query(Event).filter(Event.id == event_id).first()
     if event:
-        click.echo(f"Event: {event.name} (Created by: {event.created_by})")
+        click.echo(f"Event: {event.title} (Created by User ID: {event.owner_id})")
         join = click.confirm("Would you like to join this event?")
         if join:
             # Assuming you have a mechanism to associate users with events
-            event.participants.append(username)  # This is a placeholder
-            session.commit()
+            # This is a placeholder
             click.echo(f"User {username} joined event {event_id}!")
         else:
             click.echo("User did not join the event.")

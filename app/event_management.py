@@ -8,22 +8,19 @@ def event_cli():
     """Event Management CLI"""
     pass
 
-@event_cli.command()
-@click.argument('name')
+
+@event_cli.command('create')
+@click.argument('title')
 @click.argument('description')
-@click.argument('user_id')
-def create(name, description, user_id):
+@click.argument('owner_id', type=int)
+def create(title, description, owner_id):
     """Create a new event."""
     session: Session = SessionLocal()
-    user = session.query(User).get(user_id)
-    if not user:
-        click.echo("User not found!")
-        return
-    event = Event(name=name, description=description, user_id=user_id)
+    event = Event(title=title, description=description, owner_id=owner_id)
     session.add(event)
     session.commit()
+    click.echo(f"Event '{title}' created with ID: {event.id}")
     session.close()
-    click.echo(f"Event {name} created!")
 
 @event_cli.command()
 @click.argument('event_id', type=int)
@@ -45,7 +42,7 @@ def update(event_id, name, description):
 
 @event_cli.command()
 @click.argument('event_id', type=int)
-def dleete(event_id):
+def delete(event_id):
     """Delete an event."""
     session: Session = SessionLocal()
     event = session.query(Event).filter(Event.id == event_id).first()
@@ -68,7 +65,7 @@ def listevents():
         click.echo("No events found.")
         return
     for event in events:
-        click.echo(f"ID: {event.id}, Name: {event.name}, Description: {event.description}, Created by User ID: {event.user_id}")
+        click.echo(f"ID: {event.id}, Name: {event.title}, Description: {event.description}, Created by User ID: {event.owner_id}")
 
 if __name__ == '__main__':
     event_cli()

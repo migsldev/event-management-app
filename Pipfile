@@ -4,13 +4,11 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
+click = "*"
 sqlalchemy = "*"
 alembic = "*"
-click = "*"
-psycopg2-binary = "*"
 
 [dev-packages]
-pytest = "*"
 
 [requires]
 python_version = "3.8"

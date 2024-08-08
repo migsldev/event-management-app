@@ -10,7 +10,7 @@ def schedule_cli():
     pass
 
 @schedule_cli.command()
-@click.argument('event_id')
+@click.argument('event_id', type=int)
 @click.argument('start_time')
 @click.argument('end_time')
 def add(event_id, start_time, end_time):
@@ -63,7 +63,7 @@ def remove(schedule_id):
     click.echo(f"Schedule {schedule_id} removed!")
 
 @schedule_cli.command()
-@click.argument('event_id')
+@click.argument('event_id', type=int)
 def listschedules(event_id):
     """List all schedules for a specific event."""
     session: Session = SessionLocal()

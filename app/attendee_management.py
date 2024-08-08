@@ -10,7 +10,7 @@ def attendee_cli():
 
 @attendee_cli.command()
 @click.argument('name')
-@click.argument('event_id')
+@click.argument('event_id', type=int)
 def register(name, event_id):
     """Register a new attendee to an event."""
     session: Session = SessionLocal()
@@ -57,7 +57,7 @@ def remove(attendee_id):
     click.echo(f"Attendee {attendee_id} removed!")
 
 @attendee_cli.command()
-@click.argument('event_id')
+@click.argument('event_id', type=int)
 def listattendees(event_id):
     """List all attendees for a specific event."""
     session: Session = SessionLocal()
