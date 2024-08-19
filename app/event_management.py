@@ -1,41 +1,53 @@
 import click
 from sqlalchemy.orm import Session
+from datetime import datetime
 from db import SessionLocal
-from models import Event, User
+from models import Event, Attendee
 
 @click.group()
 def event_cli():
-    """Event Management CLI"""
+    """Event and Schedule Management CLI"""
     pass
-
 
 @event_cli.command('create')
 @click.argument('title')
 @click.argument('description')
+@click.argument('start_time')
+@click.argument('end_time')
 @click.argument('owner_id', type=int)
-def create(title, description, owner_id):
-    """Create a new event."""
+def create(title, description, start_time, end_time, owner_id):
+    """Create a new event with schedule."""
     session: Session = SessionLocal()
-    event = Event(title=title, description=description, owner_id=owner_id)
+    start_time = datetime.fromisoformat(start_time)
+    end_time = datetime.fromisoformat(end_time)
+    event = Event(title=title, description=description, start_time=start_time, end_time=end_time, owner_id=owner_id)
     session.add(event)
     session.commit()
-    click.echo(f"Event '{title}' created with ID: {event.id}")
+    
+    # Access event.id before closing the session
+    event_id = event.id
+    
     session.close()
-
+    click.echo(f"Event '{title}' created with ID: {event_id}")
+    
 @event_cli.command()
 @click.argument('event_id', type=int)
-@click.argument('name')
+@click.argument('title')
 @click.argument('description')
-def update(event_id, name, description):
-    """Update an existing event."""
+@click.argument('start_time')
+@click.argument('end_time')
+def update(event_id, title, description, start_time, end_time):
+    """Update an existing event and schedule."""
     session: Session = SessionLocal()
     event = session.query(Event).filter(Event.id == event_id).first()
     if not event:
         click.echo("Event not found!")
         session.close()
         return
-    event.name = name
+    event.title = title
     event.description = description
+    event.start_time = datetime.fromisoformat(start_time)
+    event.end_time = datetime.fromisoformat(end_time)
     session.commit()
     session.close()
     click.echo(f"Event {event_id} updated!")
@@ -65,7 +77,8 @@ def listevents():
         click.echo("No events found.")
         return
     for event in events:
-        click.echo(f"ID: {event.id}, Name: {event.title}, Description: {event.description}, Created by User ID: {event.owner_id}")
+        click.echo(f"ID: {event.id}, Title: {event.title}, Description: {event.description}, "
+                   f"Start Time: {event.start_time}, End Time: {event.end_time}, Created by User ID: {event.owner_id}")
 
 if __name__ == '__main__':
     event_cli()

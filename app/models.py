@@ -2,7 +2,6 @@ from sqlalchemy import Column, Integer, String, ForeignKey, DateTime
 from sqlalchemy.orm import relationship
 from db import Base
 
-
 class User(Base):
     __tablename__ = 'users'
 
@@ -15,19 +14,12 @@ class Event(Base):
     id = Column(Integer, primary_key=True, index=True)
     title = Column(String, index=True)
     description = Column(String, index=True)
+    start_time = Column(DateTime, index=True)
+    end_time = Column(DateTime, index=True)
     owner_id = Column(Integer, ForeignKey('users.id'))
 
     owner = relationship("User", back_populates="events")
-
-class EventSchedule(Base):
-    __tablename__ = 'event_schedules'
-
-    id = Column(Integer, primary_key=True, index=True)
-    event_id = Column(Integer, ForeignKey('events.id'))
-    start_time = Column(DateTime, index=True)
-    end_time = Column(DateTime, index=True)
-
-    event = relationship("Event", back_populates="schedules")
+    attendees = relationship("Attendee", back_populates="event")
 
 class Attendee(Base):
     __tablename__ = 'attendees'
@@ -39,5 +31,3 @@ class Attendee(Base):
     event = relationship("Event", back_populates="attendees")
 
 User.events = relationship("Event", order_by=Event.id, back_populates="owner")
-Event.schedules = relationship("EventSchedule", order_by=EventSchedule.id, back_populates="event")
-Event.attendees = relationship("Attendee", order_by=Attendee.id, back_populates="event")
